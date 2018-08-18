@@ -1,0 +1,31 @@
+{
+  "name": "utime",
+  "version": "0.9.1",
+  "description": "Javascript Date-Time minimalistic library",
+  "main": "utime.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielMazurkiewicz/utime.git"
+  },
+  "keywords": [
+    "utime",
+    "time",
+    "date",
+    "minimalistic",
+    "lib",
+    "node",
+    "javascript",
+    "timezone",
+    "utc",
+    "gmt"
+  ],
+  "author": "Daniel Mazurkiewicz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DanielMazurkiewicz/utime/issues"
+  },
+  "homepage": "https://github.com/DanielMazurkiewicz/utime#readme"
+}
