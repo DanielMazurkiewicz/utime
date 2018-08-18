@@ -23,24 +23,31 @@ Utime.registerZone('ua', ua);
 Utime.registerZone('pl', pl, true); //true means this will be a default time zone
 Utime.registerZone('pt', pt);
 
+
 function printDateAndTime(utime) {
   console.log(`===== ${utime.getTimeZone()} =====`);
   console.log(utime.toString());
 }
-const plTime = new Utime('pl'); //current time
+
+
+const plTime = new Utime('pl'); //will create Utime with current time
 printDateAndTime(plTime);
 
+
 const uaTime = plTime.in('ua');
-printDateAndTime(uaTime);
+printDateAndTime(uaTime);       //will print current time in Ukraine
+
 
 const plTimeNumber = new Utime('pl', 4329474300000); //number represents date and time, can be retrieved by getValue() method
 printDateAndTime(plTimeNumber);
 console.log(plTimeNumber.getValue()); //prints number representing date and time - eg. can be stored and used to create new utime instance
 
+
 const uaTimeArray = new Utime('ua', [2002, 1, 1,  12, 23, 13.8]); //date and time for given timezone can be provided in more readable array form
 printDateAndTime(uaTimeArray);
 
-const plTimeArray = new Utime([2002, 1, 1,  12, 23, 13.8]); //default time zone will be used - in this case pl
+
+const plTimeArray = new Utime([2002, 1, 1,  12, 23, 13.8]); //default time zone will be used - in this case "pl"
 printDateAndTime(plTimeArray);
 
 
@@ -57,36 +64,36 @@ printDateAndTime(ptTimeToShift.shiftWeeks(2));
 
 # API
 ## Utime.registerZone(name, timeZoneDatabase, defaultTimeZone)
-Registers new time zone database with given name. Last parameter is optional and points to default time zone
+Registers new time zone database with given name. Last parameter is optional and points a default time zone
 
 ## Utime.isRegistered(name)
 Checks if given time zone name is already registered
 
 ## utime.in(name, callback)
-Returns new instance of Utime with date and time in given by name timezone
+Returns new instance of Utime with date and time in given by name timezone.
 Callback is optional, its argument is a new instance of Utime
 
 ## utime.getValue()
 Returns number representing date and time
 
 ## utime.toString()
-Returns number representing date and time
+Returns date and time in current time zone as text in simplified ISO format
 
 ## utime.getTimeZone()
 Returns number representing date and time
 
 ## utime.shiftSeconds(value)
-Returns new instance of Utime with local time shifted by given number of seconds (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of seconds (can be also negative)
 
 ## utime.shiftMinutes(value)
-Returns new instance of Utime with local time shifted by given number of minutes (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of minutes (can be also negative)
 
 ## utime.shiftHours(value)
-Returns new instance of Utime with local time shifted by given number of hours (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of hours (can be also negative)
 
 ## utime.shiftDays(value)
-Returns new instance of Utime with local time shifted by given number of days (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of days (can be also negative)
 
 ## utime.shiftWeeks(value)
-Returns new instance of Utime with local time shifted by given number of weeks (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of weeks (can be also negative)
 

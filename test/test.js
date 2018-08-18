@@ -12,20 +12,26 @@ function printDateAndTime(utime) {
   console.log(`===== ${utime.getTimeZone()} =====`);
   console.log(utime.toString());
 }
-const plTime = new Utime('pl'); //current time
+
+
+const plTime = new Utime('pl'); //will create Utime with current time
 printDateAndTime(plTime);
 
+
 const uaTime = plTime.in('ua');
-printDateAndTime(uaTime);
+printDateAndTime(uaTime);       //will print current time in Ukraine
+
 
 const plTimeNumber = new Utime('pl', 4329474300000); //number represents date and time, can be retrieved by getValue() method
 printDateAndTime(plTimeNumber);
 console.log(plTimeNumber.getValue()); //prints number representing date and time - eg. can be stored and used to create new utime instance
 
+
 const uaTimeArray = new Utime('ua', [2002, 1, 1,  12, 23, 13.8]); //date and time for given timezone can be provided in more readable array form
 printDateAndTime(uaTimeArray);
 
-const plTimeArray = new Utime([2002, 1, 1,  12, 23, 13.8]); //default time zone will be used - in this case pl
+
+const plTimeArray = new Utime([2002, 1, 1,  12, 23, 13.8]); //default time zone will be used - in this case "pl"
 printDateAndTime(plTimeArray);
 
 
