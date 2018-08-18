@@ -15,7 +15,7 @@ function printDateAndTime(utime) {
 
 
 const plTime = new Utime('pl'); //will create Utime with current time
-printDateAndTime(plTime);
+printDateAndTime(plTime);       //will print current time in Poland
 
 
 const uaTime = plTime.in('ua');

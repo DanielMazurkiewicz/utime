@@ -1,9 +1,19 @@
 
+const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 31, 31];
 const zones = {
   utc: {byUtc:[], byLocal:[]}
 };
 
 let defaultZone = 'utc';
+
+function isLeapYear(year) {
+  return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+}
+
+function getMonthDays(year, month) {
+  if (month === 2 && isLeapYear(year)) return 29;
+  return monthDays[month -1];
+}
 
 function findTimeDifference(sortedZoneDb, timePoint, property) {
   if (!sortedZoneDb.length) return 0;
@@ -128,6 +138,11 @@ Utime.prototype = {
     return (new Date(this._timeLocal())).getUTCFullYear();
   },
 
+  toMonths() {
+    const date = new Date(this._timeLocal());
+    return date.getUTCFullYear() * 12 + date.getUTCMonth(),
+  }
+
   shiftSeconds(value) {
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 1000, true);
   },
@@ -142,6 +157,55 @@ Utime.prototype = {
   },
   shiftWeeks(value) {
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 604800000, true);
+  },
+  shiftMonths(value) {
+    const date = this.toArray();
+    const year = date[0], month = date[1], day = date[2];
+    const monthDaysBefore = getMonthDays(year, month);
+    var result = year * 12 + (month - 1) + value;
+    date[1] = (result % 12) + 1;
+    date[0] = (result / 12) | 0;
+
+    const monthDaysAfter = getMonthDays(date[0], date[1]);
+    if (monthDaysBefore === day || day > monthDaysAter) {
+      date[2] = monthDaysAfter;
+    }
+
+    return new Utime(this.getTimeZone(), date);
+  },
+  shiftYears(value) {
+    const date = this.toArray();
+    if (date[1] !== 2) {
+      date[0] += value;
+      return new Utime(this.getTimeZone(), date);
+    }
+
+    const leapBefore = isLeapYear(date[0]);
+    const leapAfter = isLeapYear(date[0] += value);
+
+    if (!leapBefore && leapAfter && date[2] === 28) {
+      date[2] = 29;
+    } else if (leapBefore && !leapAfter && date[2] === 29) {
+      date[2] = 28;
+    }
+    return new Utime(this.getTimeZone(), date);
+  },
+  beginingOfHour() {
+    var local = this._timeLocal();
+    return new Utime(this.getTimeZone(), ((local / 3600000) | 0)  * 3600000, true);
+  },
+  beginingOfDay() {
+    var local = this._timeLocal();
+    return new Utime(this.getTimeZone(), ((local / 86400000) | 0) * 86400000, true);
+  }
+
+  endOfHour() {
+    var local = this._timeLocal();
+    return new Utime(this.getTimeZone(), (((local / 3600000) | 0) + 1) * 3600000, true);
+  },
+  endOfDay() {
+    var local = this._timeLocal();
+    return new Utime(this.getTimeZone(), (((local / 86400000) | 0) + 1) * 86400000, true);
   }
 }
 

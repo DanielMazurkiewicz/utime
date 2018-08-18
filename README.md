@@ -11,7 +11,7 @@ You can download timezone data from this repository:
 https://github.com/DanielMazurkiewicz/utime-db
 
 # Basic usage
-Download desired timezones data, here we will use portuguese, polish and ukrainian zone.
+Download desired timezones data, here we will use portuguese, polish and ukrainian zones.
 
 ```
 const Utime = require('utime');
@@ -31,7 +31,7 @@ function printDateAndTime(utime) {
 
 
 const plTime = new Utime('pl'); //will create Utime with current time
-printDateAndTime(plTime);
+printDateAndTime(plTime);       //will print current time in Poland
 
 
 const uaTime = plTime.in('ua');
@@ -63,8 +63,9 @@ printDateAndTime(ptTimeToShift.shiftWeeks(2));
 ```
 
 # API
+
 ## Utime.registerZone(name, timeZoneDatabase, defaultTimeZone)
-Registers new time zone database with given name. Last parameter is optional and points a default time zone
+Registers new time zone database with given name. Last parameter is optional and points a default time zone. Clean instance of Utime contains "utc" zone which is also default until new zone will be registeres as default
 
 ## Utime.isRegistered(name)
 Checks if given time zone name is already registered
@@ -120,4 +121,23 @@ Returns new instance of Utime with current time zone date and time shifted by gi
 
 ## utime.shiftWeeks(value)
 Returns new instance of Utime with current time zone date and time shifted by given number of weeks (can be also negative)
+
+## utime.shiftMonths(value)
+Returns new instance of Utime with current time zone date and time shifted by given number of months (can be also negative)
+
+## utime.shiftYears(value)
+Returns new instance of Utime with current time zone date and time shifted by given number of years (can be also negative)
+
+## utime.beginingOfHour(value)
+Returns new instance of Utime with current time zone date and time adjusted to begining of an hour
+
+## utime.beginingOfDay(value)
+Returns new instance of Utime with current time zone date and time adjusted to begining of a day
+
+## utime.endOfHour(value)
+Returns new instance of Utime with current time zone date and time adjusted to end of an hour (exactly begining of next hour)
+
+## utime.endOfDay(value)
+Returns new instance of Utime with current time zone date and time adjusted to end of a day (exactly begining of next day)
+
 
