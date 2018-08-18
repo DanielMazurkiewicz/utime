@@ -7,6 +7,7 @@ let defaultZone = 'utc';
 
 function findTimeDifference(sortedZoneDb, timePoint, property) {
   if (!sortedZoneDb.length) return 0;
+
   var startIndex  = 0,
       stopIndex   = sortedZoneDb.length - 1,
       middle      = (stopIndex/2) | 0,
@@ -22,7 +23,7 @@ function findTimeDifference(sortedZoneDb, timePoint, property) {
     middle = ((stopIndex + startIndex) / 2) | 0;
   }
 
-  let result;
+  var result;
   if (startIndex < 1) {
     result = sortedZoneDb[0];
   } else {
@@ -42,7 +43,13 @@ function Utime(timeZone, time, _timeIsLocal) {
   if (time === undefined) {
     time = (new Date()).getTime();
   } else if (time instanceof Array) {
-    time = Date.UTC(time[0], time[1] - 1, time[2], time[3], time[4], time[5]) + (time[5] ? (time[5] - (time[5] | 0)) * 1000 : 0);
+    time = Date.UTC(
+      time[0], 
+      time[1] ? time[1] - 1 : 0, 
+      time[2], 
+      time[3], 
+      time[4], 
+      time[5]) + (time[5] ? (time[5] - (time[5] | 0)) * 1000 : 0);
     _timeIsLocal = true;
   }
 
@@ -72,6 +79,12 @@ Utime.registerZone = (name, zoneDb, defaultTimeZone) => {
 
 
 Utime.prototype = {
+  in(zoneName, callback) {
+    const utime = new Utime(zoneName, this.getValue());
+    if (callback) callback(utime, zoneName)
+    return utime;
+  },
+
   toString() {
     const text = (new Date(this._timeLocal())).toISOString();
     const separator = text.indexOf('T');
@@ -82,11 +95,39 @@ Utime.prototype = {
   toDate() {
     return new Date(this.getValue());
   },
-  in(zoneName, callback) {
-    const utime = new Utime(zoneName, this.getValue());
-    if (callback) callback(utime, zoneName)
-    return utime;
+  toArray() {
+    const date = new Date(this._timeLocal());
+    return [
+      date.getUTCFullYear(),
+      date.getUTCMonth() + 1,
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds() + date.getUTCMilliseconds() / 1000
+    ];
   },
+
+  second() {
+    const date = new Date(this._timeLocal());
+    return date.getUTCSeconds() + date.getUTCMilliseconds() / 1000;
+  },
+  minute() {
+    return (new Date(this._timeLocal())).getUTCMinutes();
+  },
+  hour() {
+    return (new Date(this._timeLocal())).getUTCHours();
+  },
+
+  day() {
+    return (new Date(this._timeLocal())).getUTCDate();
+  },
+  month() {
+    return (new Date(this._timeLocal())).getUTCMonth() + 1;
+  },
+  year() {
+    return (new Date(this._timeLocal())).getUTCFullYear();
+  },
+
   shiftSeconds(value) {
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 1000, true);
   },

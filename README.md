@@ -79,8 +79,32 @@ Returns number representing date and time
 ## utime.toString()
 Returns date and time in current time zone as text in simplified ISO format
 
+## utime.toDate()
+Returns Javascript Date() instance
+
+## utime.toArray()
+Returns current time zone date and time as an array (together with timezone name can be used to instantiate new Utime)
+
+## utime.second()
+Returns number representing current time zone seconds
+
+## utime.minute()
+Returns number representing current time zone minutes
+
+## utime.hour()
+Returns number representing current time zone hours
+
+## utime.day()
+Returns number representing current time zone day
+
+## utime.month()
+Returns number representing current time zone month
+
+## utime.year()
+Returns number representing current time zone year
+
 ## utime.getTimeZone()
-Returns number representing date and time
+Returns text representing a registered name of current time zone
 
 ## utime.shiftSeconds(value)
 Returns new instance of Utime with current time zone date and time shifted by given number of seconds (can be also negative)
