@@ -140,8 +140,8 @@ Utime.prototype = {
 
   toMonths() {
     const date = new Date(this._timeLocal());
-    return date.getUTCFullYear() * 12 + date.getUTCMonth(),
-  }
+    return date.getUTCFullYear() * 12 + date.getUTCMonth();
+  },
 
   shiftSeconds(value) {
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 1000, true);
@@ -197,7 +197,7 @@ Utime.prototype = {
   beginingOfDay() {
     var local = this._timeLocal();
     return new Utime(this.getTimeZone(), ((local / 86400000) | 0) * 86400000, true);
-  }
+  },
 
   endOfHour() {
     var local = this._timeLocal();
