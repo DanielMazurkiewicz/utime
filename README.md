@@ -104,17 +104,35 @@ Returns number representing current time zone month
 ## utime.year()
 Returns number representing current time zone year
 
+## utime.dayOfWeek()
+Returns number representing current time zone day of week where 0 means Monday and 6 means Sunday
+
+## utime.getYearMonthID()
+Returns number representing current time zone unique identifier for combination of year and month
+
+## utime.getWeekID()
+Returns number representing current time zone unique identifier of week
+
+## utime.getDayID()
+Returns number representing current time zone unique identifier of day
+
+## utime.getHourID()
+Returns number representing current time zone unique identifier of hour
+
 ## utime.getTimeZone()
 Returns text representing a registered name of current time zone
 
-## utime.shiftSeconds(value)
-Returns new instance of Utime with current time zone date and time shifted by given number of seconds (can be also negative)
+## utime.shiftSeconds(value, absolute)
+Returns new instance of Utime with current time zone date and time shifted by given number of seconds (can be also negative).
+"absolute" is optional parameter and set to true makes shift not taking into consideration time changes, just shifts given number of seconds
 
 ## utime.shiftMinutes(value)
-Returns new instance of Utime with current time zone date and time shifted by given number of minutes (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of minutes (can be also negative).
+"absolute" is optional parameter and set to true makes shift not taking into consideration time changes, just shifts given number of minutes
 
 ## utime.shiftHours(value)
-Returns new instance of Utime with current time zone date and time shifted by given number of hours (can be also negative)
+Returns new instance of Utime with current time zone date and time shifted by given number of hours (can be also negative).
+"absolute" is optional parameter and set to true makes shift not taking into consideration time changes, just shifts given number of hours
 
 ## utime.shiftDays(value)
 Returns new instance of Utime with current time zone date and time shifted by given number of days (can be also negative)
@@ -128,16 +146,29 @@ Returns new instance of Utime with current time zone date and time shifted by gi
 ## utime.shiftYears(value)
 Returns new instance of Utime with current time zone date and time shifted by given number of years (can be also negative)
 
-## utime.beginingOfHour(value)
+## utime.beginingOfHour()
 Returns new instance of Utime with current time zone date and time adjusted to begining of an hour
 
-## utime.beginingOfDay(value)
+## utime.beginingOfDay()
 Returns new instance of Utime with current time zone date and time adjusted to begining of a day
 
-## utime.endOfHour(value)
+## utime.beginingOfMonth()
+Returns new instance of Utime with current time zone date and time adjusted to begining of a month
+
+## utime.endOfHour()
 Returns new instance of Utime with current time zone date and time adjusted to end of an hour (exactly begining of next hour)
 
-## utime.endOfDay(value)
+## utime.endOfDay()
 Returns new instance of Utime with current time zone date and time adjusted to end of a day (exactly begining of next day)
 
+## utime.endOfMonth()
+Returns new instance of Utime with current time zone date and time adjusted to end of a day (exactly begining of next month)
+
+## next(dayOfWeek, dontReturnCurrentDay = true)
+Returns new instance of Utime with current time zone date and time adjusted to next occurence of day provided by "dayOdWeek" parameter.
+"dontReturnCurrentDay" is optional and if set to false allows to return as result also current day (if it matches dayOfWeek)
+
+## previous(dayOfWeek, dontReturnCurrentDay = true)
+Returns new instance of Utime with current time zone date and time adjusted to previous occurence of day provided by "dayOdWeek" parameter.
+"dontReturnCurrentDay" is optional and if set to false allows to return as result also current day (if it matches dayOfWeek)
 

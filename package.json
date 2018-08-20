@@ -1,6 +1,6 @@
 {
   "name": "utime",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Javascript Date-Time minimalistic library",
   "main": "utime.js",
   "scripts": {

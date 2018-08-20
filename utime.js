@@ -5,9 +5,18 @@ const zones = {
 };
 
 let defaultZone = 'utc';
+function positiveModulo(number, modulo) {
+  var result = number % modulo;
+  if (result < 0) result += modulo;
+  return result;
+}
 
 function isLeapYear(year) {
   return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+}
+
+function yearMonthIDtoArray(yearMonthID) {
+  return [Math.floor(yearMonthID / 12) + 1970, positiveModulo(yearMonthID, 12) + 1];
 }
 
 function getMonthDays(year, month) {
@@ -43,6 +52,26 @@ function findTimeDifference(sortedZoneDb, timePoint, property) {
   return result[1] - result[0];
 }
 
+function deminifyZoneDb(zoneDb) {
+  var result = [];
+  if (zoneDb && zoneDb.length >= 3) {
+    var elmement = [];
+    var multiplier = zoneDb[zoneDb.length -1];
+    var current, previous = zoneDb[0];
+    elmement.push(previous * multiplier);
+    for (let i = 1; i < zoneDb.length - 1; i++) {
+      current = previous + zoneDb[i];
+      elmement.push(current * multiplier);
+      previous = current;
+      if (elmement.length === 2) {
+        result.push(elmement);
+        elmement = [];
+      }
+    }
+  }
+  return result;
+}
+
 function Utime(timeZone, time, _timeIsLocal) {
   let timeLocal, timeDifference;
   if (typeof timeZone !== 'string') {
@@ -56,10 +85,10 @@ function Utime(timeZone, time, _timeIsLocal) {
     time = Date.UTC(
       time[0], 
       time[1] ? time[1] - 1 : 0, 
-      time[2], 
-      time[3], 
-      time[4], 
-      time[5]) + (time[5] ? (time[5] - (time[5] | 0)) * 1000 : 0);
+      time[2] || 1, 
+      time[3] || 0, 
+      time[4] || 0, 
+      time[5] || 0) + (time[5] ? (time[5] - (time[5] | 0)) * 1000 : 0);
     _timeIsLocal = true;
   }
 
@@ -80,6 +109,9 @@ function Utime(timeZone, time, _timeIsLocal) {
 
 Utime.isRegistred = name => zone[name] ? true : false;
 Utime.registerZone = (name, zoneDb, defaultTimeZone) => {
+  if ((zoneDb[0] !== undefined) && !(zoneDb[0] instanceof Array)) {
+    zoneDb = deminifyZoneDb(zoneDb);
+  }
   zones[name] = {
     byUtc: zoneDb.sort((a, b) => a[0] - b[0]),
     byLocal: zoneDb.sort((a, b) => a[1] - b[1])
@@ -95,7 +127,7 @@ Utime.prototype = {
     return utime;
   },
 
-  toString() {
+  toString(a) {
     const text = (new Date(this._timeLocal())).toISOString();
     const separator = text.indexOf('T');
     const date = text.substring(0, separator);
@@ -137,19 +169,34 @@ Utime.prototype = {
   year() {
     return (new Date(this._timeLocal())).getUTCFullYear();
   },
-
-  toMonths() {
-    const date = new Date(this._timeLocal());
-    return date.getUTCFullYear() * 12 + date.getUTCMonth();
+  dayOfWeek() {
+    return ((this.getDayID() - 4)  % 7);
   },
 
-  shiftSeconds(value) {
+  getYearMonthID() {
+    const date = new Date(this._timeLocal());
+    return (date.getUTCFullYear() - 1970) * 12 + date.getUTCMonth();
+  },
+  getWeekID() {
+    return Math.floor(this._timeLocal()/604800000);
+  },
+  getDayID() {
+    return Math.floor(this._timeLocal()/86400000);
+  },
+  getHourID() {
+    return Math.floor(this._timeLocal()/3600000);
+  },
+
+  shiftSeconds(value, absolute) {
+    if (absolute) return new Utime(this.getTimeZone(), this.getValue() + value * 1000);
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 1000, true);
   },
-  shiftMinutes(value) {
+  shiftMinutes(value, absolute) {
+    if (absolute) return new Utime(this.getTimeZone(), this.getValue() + value * 60000);
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 60000, true);
   },
-  shiftHours(value) {
+  shiftHours(value, absolute) {
+    if (absolute) return new Utime(this.getTimeZone(), this.getValue() + value * 3600000);
     return new Utime(this.getTimeZone(), this._timeLocal() + value * 3600000, true);
   },
   shiftDays(value) {
@@ -163,11 +210,11 @@ Utime.prototype = {
     const year = date[0], month = date[1], day = date[2];
     const monthDaysBefore = getMonthDays(year, month);
     var result = year * 12 + (month - 1) + value;
-    date[1] = (result % 12) + 1;
-    date[0] = (result / 12) | 0;
+    date[1] = positiveModulo(result, 12) + 1;
+    date[0] = Math.floor(result / 12);
 
     const monthDaysAfter = getMonthDays(date[0], date[1]);
-    if (monthDaysBefore === day || day > monthDaysAter) {
+    if (monthDaysBefore === day || day > monthDaysAfter) {
       date[2] = monthDaysAfter;
     }
 
@@ -190,22 +237,44 @@ Utime.prototype = {
     }
     return new Utime(this.getTimeZone(), date);
   },
-  beginingOfHour() {
+  beginingOfHour(shiftHours = 0) {
     var local = this._timeLocal();
-    return new Utime(this.getTimeZone(), ((local / 3600000) | 0)  * 3600000, true);
+    return new Utime(this.getTimeZone(), (Math.floor(local / 3600000) + shiftHours)  * 3600000, true);
   },
-  beginingOfDay() {
+  beginingOfDay(shiftDays = 0) {
     var local = this._timeLocal();
-    return new Utime(this.getTimeZone(), ((local / 86400000) | 0) * 86400000, true);
+    return new Utime(this.getTimeZone(), (Math.floor(local / 86400000) + shiftDays) * 86400000, true);
+  },
+  beginingOfMonth(shiftMonths = 0) {
+    return new Utime(this.getTimeZone(), yearMonthIDtoArray(this.getYearMonthID() + shiftMonths));
   },
 
-  endOfHour() {
+  endOfHour(shiftHours = 0) {
     var local = this._timeLocal();
-    return new Utime(this.getTimeZone(), (((local / 3600000) | 0) + 1) * 3600000, true);
+    return new Utime(this.getTimeZone(), (Math.floor(local / 3600000) + 1 + shiftHours) * 3600000, true);
   },
-  endOfDay() {
+  endOfDay(shiftDays = 0) {
     var local = this._timeLocal();
-    return new Utime(this.getTimeZone(), (((local / 86400000) | 0) + 1) * 86400000, true);
+    return new Utime(this.getTimeZone(), (Math.floor(local / 86400000) + 1 + shiftDays) * 86400000, true);
+  },
+  endOfMonth(shiftMonths = 0) {
+    return new Utime(this.getTimeZone(), yearMonthIDtoArray(this.getYearMonthID() + shiftMonths + 1));
+  },
+  next(dayOfWeek, skipIfCurrent = true, shiftWeeks = 0) {
+    var daysToShift = dayOfWeek - this.dayOfWeek();
+    if (daysToShift < 0 || (skipIfCurrent && !daysToShift)) {
+      daysToShift += 7;
+    }
+    daysToShift += shiftWeeks * 7;
+    return this.shiftDays(daysToShift);
+  },
+  previous(dayOfWeek, skipIfCurrent = true, shiftWeeks = 0) {
+    var daysToShift = this.dayOfWeek() - dayOfWeek;
+    if (daysToShift < 0 || (skipIfCurrent && !daysToShift)) {
+      daysToShift += 7;
+    }
+    daysToShift = -daysToShift + shiftWeeks * 7;
+    return this.shiftDays(daysToShift);
   }
 }
 
